@@ -6,8 +6,8 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.conditions import LaunchConfigurationEquals
-from launch.conditions import LaunchConfigurationNotEquals
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import EqualsSubstitution
 from launch.substitutions import LaunchConfiguration
 
 from launch_ros.actions import Node
@@ -28,18 +28,18 @@ def generate_launch_description():
     min_pipes_world = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        condition=LaunchConfigurationEquals('gui', 'true'),
+        condition=IfCondition(EqualsSubstitution([LaunchConfiguration('gui'), 'true'])),
         launch_arguments={
-           'gz_args': '-r ' + world_path
+            'gz_args': '-r ' + world_path
         }.items(),
     )
 
     min_pipes_world_no_gui = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        condition=LaunchConfigurationEquals('gui', 'false'),
+        condition=IfCondition(EqualsSubstitution([LaunchConfiguration('gui'), 'false'])),
         launch_arguments={
-           'gz_args': '-s -r ' + world_path
+            'gz_args': '-s -r ' + world_path
         }.items(),
     )
 
